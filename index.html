@@ -3,149 +3,281 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestor de Finanzas</title>
+<title>Finanzas</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; }
-.container { max-width: 1000px; margin: 0 auto; padding: 1rem; }
-.header { margin-bottom: 1.5rem; }
-.header h1 { font-size: 20px; margin-bottom: 0.25rem; color: #fff; }
-.tabs { display: flex; gap: 8px; border-bottom: 1px solid #333; overflow-x: auto; }
-.tab-btn { padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; font-size: 14px; color: #888; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
-.tab-btn.active { color: #fff; border-bottom-color: #10b981; }
+html, body { height: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); color: #e0e0e0; display: flex; flex-direction: column; }
+.container { flex: 1; max-width: 1000px; width: 100%; margin: 0 auto; padding: 1rem 1rem 100px 1rem; overflow-y: auto; }
+.header { padding-bottom: 1rem; margin-bottom: 1.5rem; }
+.header h1 { font-size: 24px; color: #10b981; margin-bottom: 0.25rem; }
+.header-subtitle { font-size: 12px; color: #888; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
-.card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-.card h2 { font-size: 16px; margin-bottom: 1rem; font-weight: 500; color: #fff; }
-.form-group { margin-bottom: 1rem; }
-label { display: block; font-size: 13px; color: #aaa; margin-bottom: 0.5rem; font-weight: 500; }
-input, select { width: 100%; padding: 0.75rem; border: 1px solid #333; border-radius: 6px; font-size: 14px; background: #222; color: #e0e0e0; }
-input:focus, select:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+.card { background: rgba(26, 31, 46, 0.8); border: 1px solid #2a3548; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(10px); }
+.card h2 { font-size: 14px; margin-bottom: 1.5rem; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+.month-selector { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; align-items: center; justify-content: center; }
+.month-selector button { padding: 0.5rem 1rem; font-size: 12px; background: rgba(34, 34, 34, 0.8); border: 1px solid #333; color: #e0e0e0; border-radius: 6px; cursor: pointer; }
+.month-display { font-weight: 600; min-width: 150px; text-align: center; color: #10b981; font-size: 13px; }
+.summary-circle { text-align: center; margin: 1.5rem 0; }
+.circle { width: 140px; height: 140px; border-radius: 50%; border: 3px solid #10b981; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative; }
+.circle-value { font-size: 32px; font-weight: 700; color: #10b981; }
+.circle-label { font-size: 11px; color: #888; text-transform: uppercase; margin-top: 0.5rem; letter-spacing: 0.5px; }
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.summary-box { background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 12px; padding: 1rem; text-align: center; }
+.summary-box.negative { background: rgba(255, 107, 107, 0.08); border-color: #ff6b6b; }
+.summary-label { font-size: 11px; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-value { font-size: 20px; font-weight: 700; color: #10b981; }
+.summary-box.negative .summary-value { color: #ff6b6b; }
+.form-group { margin-bottom: 1.25rem; }
+label { display: block; font-size: 12px; color: #aaa; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+input, select { width: 100%; padding: 0.75rem; border: 1px solid #333; border-radius: 8px; font-size: 14px; background: rgba(34, 34, 34, 0.8); color: #e0e0e0; }
+input:focus, select:focus { outline: none; border-color: #10b981; background: rgba(34, 34, 34, 0.95); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-button { padding: 0.75rem 1rem; background: #222; border: 1px solid #333; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; color: #e0e0e0; }
-button:hover { background: #2a2a2a; border-color: #444; }
-button.primary { background: #10b981; color: white; border-color: #10b981; }
-button.primary:hover { background: #059669; }
-.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-.metric-card { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 1rem; text-align: center; }
-.metric-label { font-size: 12px; color: #888; margin-bottom: 0.5rem; }
-.metric-value { font-size: 22px; font-weight: 600; }
-.positive { color: #10b981; }
-.negative { color: #ff6b6b; }
-.entry-item { background: #1a1a1a; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #3b82f6; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .form-row-3 { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: 1fr; } }
+button { padding: 0.75rem 1.5rem; background: #10b981; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; color: white; width: 100%; }
+button:hover { background: #059669; }
+button.secondary { background: transparent; border: 1px solid #333; color: #e0e0e0; }
+button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width: auto; }
+.entry-item { background: rgba(34, 34, 34, 0.8); border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #10b981; }
 .entry-info { flex: 1; }
-.entry-category { font-size: 12px; color: #888; }
-.entry-amount { font-weight: 500; }
-.delete-btn { background: none; border: none; color: #ff6b6b; cursor: pointer; padding: 0.25rem 0.5rem; }
-.month-selector { display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; justify-content: center; }
-.summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.summary-table th { background: #1a1a1a; font-weight: 500; padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; color: #fff; }
+.entry-desc { font-weight: 500; font-size: 14px; margin-bottom: 0.25rem; }
+.entry-category { font-size: 11px; color: #888; }
+.entry-meta { font-size: 10px; color: #666; margin-top: 0.25rem; }
+.entry-amount { font-weight: 700; font-size: 14px; }
+.table-wrapper { overflow-x: auto; }
+.summary-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.summary-table th { background: rgba(16, 185, 129, 0.08); font-weight: 600; padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px; }
 .summary-table td { padding: 0.75rem; border-bottom: 1px solid #333; }
-.summary-table tr:hover { background: #222; }
-.stat-box { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
-.stat-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #333; }
-.stat-row:last-child { border-bottom: none; }
-.stat-label { font-size: 13px; color: #888; }
-.color-bar { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
-.bar-income { background: #10b981; }
-.bar-expense { background: #ff6b6b; }
-.bar-debt { background: #f59e0b; }
+.summary-table tr:hover { background: rgba(16, 185, 129, 0.05); }
+.loan-item { background: rgba(34, 34, 34, 0.8); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #333; }
+.loan-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
+.loan-title { font-weight: 600; font-size: 14px; }
+.loan-delete { color: #ff6b6b; cursor: pointer; }
+.loan-bar { background: rgba(255,107,107,0.1); border-radius: 4px; height: 8px; margin-bottom: 0.5rem; overflow: hidden; }
+.loan-progress { background: #10b981; height: 100%; border-radius: 4px; }
+.loan-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; font-size: 11px; color: #888; margin-bottom: 1rem; }
+.loan-info-item { }
+.loan-info-label { display: block; color: #666; margin-bottom: 0.25rem; }
+.loan-info-value { font-weight: 600; color: #10b981; font-size: 13px; }
+.loan-payment { background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 8px; padding: 0.75rem; }
+.loan-payment-row { display: flex; gap: 0.5rem; }
+.loan-payment-row input { flex: 1; margin: 0; }
+.loan-payment-row button { margin: 0; width: auto; padding: 0.6rem 1rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.stat-item { background: rgba(34, 34, 34, 0.8); border: 1px solid #333; border-radius: 10px; padding: 1rem; text-align: center; }
+.stat-label { font-size: 11px; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 20px; font-weight: 700; color: #10b981; }
+.stat-item.negative .stat-value { color: #ff6b6b; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 20, 25, 0.95); border-top: 1px solid #2a3548; display: flex; justify-content: space-around; align-items: center; height: 70px; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 0.25rem; padding: 0.5rem; border-top: 2px solid transparent; transition: all 0.2s; color: #888; font-size: 10px; }
+.nav-item.active { color: #10b981; border-top-color: #10b981; }
+.nav-icon { font-size: 20px; }
+.nav-label { font-size: 10px; font-weight: 500; }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header"><h1>💰 Finanzas personales</h1></div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('home')">Resumen</button>
-    <button class="tab-btn" onclick="switchTab('income')">Ingresos</button>
-    <button class="tab-btn" onclick="switchTab('expenses')">Gastos</button>
-    <button class="tab-btn" onclick="switchTab('debts')">Deudas</button>
-    <button class="tab-btn" onclick="switchTab('stats')">Estadísticas</button>
-  </div>
-  <div class="tab-content active" id="home">
+  <!-- RESUMEN -->
+  <div class="tab-content active" id="resumen">
+    <div class="header">
+      <h1>Tu dinero</h1>
+      <div class="header-subtitle">Control de finanzas personales</div>
+    </div>
+
     <div class="card">
       <div class="month-selector">
-        <button onclick="previousMonth()">← Anterior</button>
-        <span style="font-weight: 500; min-width: 150px; text-align: center;" id="currentMonth"></span>
-        <button onclick="nextMonth()">Siguiente →</button>
-      </div>
-      <div class="metric-grid">
-        <div class="metric-card"><div class="metric-label">Ingresos</div><div class="metric-value positive" id="totalIncome">€0.00</div></div>
-        <div class="metric-card"><div class="metric-label">Gastos</div><div class="metric-value negative" id="totalExpenses">€0.00</div></div>
-        <div class="metric-card"><div class="metric-label">Deudas</div><div class="metric-value negative" id="totalDebts">€0.00</div></div>
-        <div class="metric-card"><div class="metric-label">Ahorro neto</div><div class="metric-value" id="netSavings">€0.00</div></div>
+        <button class="secondary" onclick="previousMonth()">← Anterior</button>
+        <span class="month-display" id="currentMonth"></span>
+        <button class="secondary" onclick="nextMonth()">Siguiente →</button>
       </div>
     </div>
-    <div class="card"><h2>Gastos por categoría</h2><table class="summary-table"><thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead><tbody id="expensesByCategory"></tbody></table></div>
-    <div class="card"><h2>Histórico anual</h2><table class="summary-table"><thead><tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Deudas</th><th style="text-align: right;">Ahorro</th></tr></thead><tbody id="annualSummary"></tbody></table></div>
+
+    <div class="card">
+      <div class="summary-circle">
+        <div class="circle">
+          <div class="circle-value" id="netSavings">0%</div>
+          <div class="circle-label">Ahorro</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="summary-label">Ingresos</div>
+          <div class="summary-value" id="totalIncome">€0.00</div>
+        </div>
+        <div class="summary-box negative">
+          <div class="summary-label">Gastos</div>
+          <div class="summary-value" id="totalExpenses">€0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Gastos por categoría</h2>
+      <div class="table-wrapper">
+        <table class="summary-table">
+          <thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead>
+          <tbody id="expensesByCategory"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Últimos 12 meses</h2>
+      <div class="table-wrapper">
+        <table class="summary-table">
+          <thead><tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Ahorro</th></tr></thead>
+          <tbody id="annualSummary"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="tab-content" id="income">
-    <div class="card"><h2>Registrar nómina</h2><div class="form-group"><label>Ingreso mensual (€)</label><input type="number" id="salary" step="0.01" placeholder="2500.00"></div><button class="primary" onclick="saveSalary()">Guardar</button></div>
-    <div class="card"><h2>Ingresos del mes</h2><div id="incomeList"></div></div>
+
+  <!-- INGRESOS -->
+  <div class="tab-content" id="ingresos">
+    <div class="header">
+      <h1>Ingresos</h1>
+      <div class="header-subtitle">Gestiona tus ingresos mensuales</div>
+    </div>
+
+    <div class="card">
+      <h2>Registrar nómina</h2>
+      <div class="form-group">
+        <label>Ingreso mensual (€)</label>
+        <input type="number" id="salary" step="0.01" placeholder="2500.00">
+      </div>
+      <button onclick="saveSalary()">Guardar nómina</button>
+    </div>
+    <div class="card">
+      <h2>Ingresos del mes</h2>
+      <div id="incomeList"></div>
+    </div>
   </div>
-  <div class="tab-content" id="expenses">
-    <div class="card"><h2>Nuevo gasto</h2><div class="form-group"><label>Categoría</label><select id="expenseCategory"><option value="">Selecciona categoría</option></select></div><div class="form-group"><label>Nueva categoría (opcional)</label><input type="text" id="newCategory" placeholder="Ej: Cine, Ropa..."></div><div class="form-row"><div><label>Cantidad (€)</label><input type="number" id="expenseAmount" step="0.01" placeholder="0.00"></div><div><label>Descripción</label><input type="text" id="expenseDesc" placeholder="Detalles"></div></div><button class="primary" onclick="addExpense()">Registrar</button></div>
-    <div class="card"><h2>Gastos del mes</h2><div id="expensesList"></div></div>
+
+  <!-- GASTOS FIJOS -->
+  <div class="tab-content" id="gastos-fijos">
+    <div class="header">
+      <h1>Gastos fijos</h1>
+      <div class="header-subtitle">Pagos recurrentes</div>
+    </div>
+
+    <div class="card">
+      <h2>Gastos fijos del mes</h2>
+      <div id="fixedList"></div>
+    </div>
   </div>
-  <div class="tab-content" id="debts">
-    <div class="card"><h2>Registrar pago</h2><div class="form-group"><label>Nombre de la deuda</label><input type="text" id="debtName" placeholder="Ej: Tarjeta crédito..."></div><div class="form-row"><div><label>Cantidad (€)</label><input type="number" id="debtAmount" step="0.01" placeholder="0.00"></div><div><label>Frecuencia</label><select id="debtFrequency"><option value="once">Una sola vez</option><option value="monthly">Mensual</option><option value="quarterly">Trimestral</option><option value="annual">Anual</option></select></div></div><button class="primary" onclick="addDebt()">Registrar</button></div>
-    <div class="card"><h2>Pagos registrados</h2><div id="debtsList"></div></div>
+
+  <!-- GASTOS VARIABLES -->
+  <div class="tab-content" id="gastos-variables">
+    <div class="header">
+      <h1>Gastos variables</h1>
+      <div class="header-subtitle">Gastos ocasionales</div>
+    </div>
+
+    <div class="card">
+      <h2>Nuevo gasto variable</h2>
+      <div class="form-group">
+        <label>Descripción</label>
+        <input type="text" id="varDesc" placeholder="Ej: Cena, Compras...">
+      </div>
+      <div class="form-row">
+        <div><label>Cantidad (€)</label><input type="number" id="varAmount" step="0.01" placeholder="0.00"></div>
+        <div><label>Categoría</label><select id="varCategory"><option value="">Selecciona</option></select></div>
+      </div>
+      <button onclick="addVariableExpense()">Registrar gasto variable</button>
+    </div>
+    <div class="card">
+      <h2>Gastos variables del mes</h2>
+      <div id="varList"></div>
+    </div>
   </div>
-  <div class="tab-content" id="stats">
-    <div class="card"><h2>Resumen anual</h2><div class="stat-box"><div class="stat-row"><span class="stat-label"><span class="color-bar bar-income"></span>Ingresos totales</span><span style="font-weight: 500; color: #10b981;" id="yearTotalIncome">€0.00</span></div><div class="stat-row"><span class="stat-label"><span class="color-bar bar-expense"></span>Gastos totales</span><span style="font-weight: 500; color: #ff6b6b;" id="yearTotalExpenses">€0.00</span></div><div class="stat-row"><span class="stat-label"><span class="color-bar bar-debt"></span>Deudas totales</span><span style="font-weight: 500; color: #ff6b6b;" id="yearTotalDebts">€0.00</span></div><div class="stat-row"><span class="stat-label">Ahorro anual</span><span style="font-weight: 500;" id="yearNetSavings">€0.00</span></div></div></div>
-    <div class="card"><h2>Promedio mensual</h2><div class="stat-box"><div class="stat-row"><span class="stat-label">Ingresos promedio</span><span style="font-weight: 500; color: #10b981;" id="avgIncome">€0.00</span></div><div class="stat-row"><span class="stat-label">Gastos promedio</span><span style="font-weight: 500; color: #ff6b6b;" id="avgExpenses">€0.00</span></div><div class="stat-row"><span class="stat-label">Deudas promedio</span><span style="font-weight: 500; color: #ff6b6b;" id="avgDebts">€0.00</span></div><div class="stat-row"><span class="stat-label">Ahorro promedio</span><span style="font-weight: 500;" id="avgSavings">€0.00</span></div></div></div>
-    <div class="card"><h2>Porcentajes</h2><div class="stat-box"><div class="stat-row"><span class="stat-label">Gastos vs ingresos</span><span style="font-weight: 500;" id="expenseRatio">0%</span></div><div class="stat-row"><span class="stat-label">Deudas vs ingresos</span><span style="font-weight: 500;" id="debtRatio">0%</span></div><div class="stat-row"><span class="stat-label">Ahorro vs ingresos</span><span style="font-weight: 500; color: #10b981;" id="savingRatio">0%</span></div></div></div>
-    <div class="card"><h2>Categorías (año)</h2><table class="summary-table"><thead><tr><th>Categoría</th><th style="text-align: right;">Total</th><th style="text-align: right;">%</th></tr></thead><tbody id="yearCategoryStats"></tbody></table></div>
+
+  <!-- PRÉSTAMOS -->
+  <div class="tab-content" id="prestamos">
+    <div class="header">
+      <h1>Préstamos</h1>
+      <div class="header-subtitle">Control de deudas y pagos</div>
+    </div>
+
+    <div class="card">
+      <h2>Nuevo préstamo</h2>
+      <div class="form-group">
+        <label>Nombre del préstamo</label>
+        <input type="text" id="loanName" placeholder="Ej: Hipoteca, Coche...">
+      </div>
+      <div class="form-row">
+        <div><label>Saldo inicial (€)</label><input type="number" id="loanBalance" step="0.01" placeholder="0.00"></div>
+        <div><label>Cuota mensual (€)</label><input type="number" id="loanPayment" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="form-row-3">
+        <div><label>Día del mes</label><input type="number" id="loanDay" min="1" max="31" placeholder="15"></div>
+        <div><label>Categoría</label><select id="loanCategory"><option value="">Selecciona</option></select></div>
+        <div><label>Fecha finalización</label><input type="month" id="loanEndDate"></div>
+      </div>
+      <button onclick="addLoan()">Crear préstamo</button>
+    </div>
+    <div class="card">
+      <h2>Tus préstamos</h2>
+      <div id="loansList"></div>
+    </div>
   </div>
 </div>
-<script>
-try {
-  if (!window.localStorage) {
-    window.localStorage = {};
-  }
-} catch(e) {
-  console.log('localStorage no disponible, usando fallback');
-}
 
-const STORAGE_KEY = 'finanzas_data_v2';
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchTab('resumen')">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Resumen</div>
+  </div>
+  <div class="nav-item" onclick="switchTab('ingresos')">
+    <div class="nav-icon">💰</div>
+    <div class="nav-label">Ingresos</div>
+  </div>
+  <div class="nav-item" onclick="switchTab('gastos-fijos')">
+    <div class="nav-icon">🔧</div>
+    <div class="nav-label">Gastos fijos</div>
+  </div>
+  <div class="nav-item" onclick="switchTab('gastos-variables')">
+    <div class="nav-icon">🛒</div>
+    <div class="nav-label">Gastos var.</div>
+  </div>
+  <div class="nav-item" onclick="switchTab('prestamos')">
+    <div class="nav-icon">💳</div>
+    <div class="nav-label">Préstamos</div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'finanzas_data_v8';
 let currentMonth = new Date();
 let data = loadData();
 
 function loadData() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      console.log('Datos cargados:', parsed);
-      return parsed;
-    }
-  } catch(e) {
-    console.log('Error al cargar:', e);
-  }
-  return { expenses: {}, income: {}, debts: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] };
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  return { income: {}, fixedByMonth: {}, variable: {}, loans: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] };
 }
 
 function saveData() {
   try {
-    const json = JSON.stringify(data);
-    localStorage.setItem(STORAGE_KEY, json);
-    console.log('Datos guardados:', json.length, 'caracteres');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch(e) {
-    console.log('Error al guardar:', e);
-    alert('Error guardando datos: ' + e.message);
+    alert('Error: ' + e.message);
   }
 }
 
 window.addEventListener('beforeunload', saveData);
 
-function getMonthKey(date) { 
-  return date.toISOString().slice(0, 7); 
-}
+function getMonthKey(date) { return date.toISOString().slice(0, 7); }
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
   document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
   updateUI();
@@ -155,36 +287,49 @@ function updateUI() {
   const monthKey = getMonthKey(currentMonth);
   document.getElementById('currentMonth').textContent = currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
   updateIncomeUI(monthKey);
-  updateExpensesUI(monthKey);
-  updateDebtsUI(monthKey);
+  updateFixedUI(monthKey);
+  updateVariableUI(monthKey);
+  updateLoansUI(monthKey);
   updateMetrics(monthKey);
   updateHistory();
-  updateStats();
 }
 
 function updateMetrics(monthKey) {
   const monthIncome = data.income[monthKey] || {};
-  const monthExpenses = data.expenses[monthKey] || {};
-  const monthDebts = data.debts[monthKey] || [];
+  const monthFixed = data.fixedByMonth[monthKey] || {};
+  const monthVariable = data.variable[monthKey] || {};
+  
   const totalIncome = Object.values(monthIncome).reduce((a, b) => a + b, 0);
-  const totalExpenses = Object.values(monthExpenses).reduce((sum, cats) => sum + Object.values(cats).reduce((a, b) => a + (b.amount || b), 0), 0);
-  const totalDebts = monthDebts.reduce((a, d) => a + d.amount, 0);
-  const netSavings = totalIncome - totalExpenses - totalDebts;
+  const totalFixed = Object.values(monthFixed).reduce((a, b) => a + (b.amount || b), 0);
+  const totalVariable = Object.values(monthVariable).reduce((a, b) => a + (b.amount || b), 0);
+  const totalExpenses = totalFixed + totalVariable;
+  const netSavings = totalIncome - totalExpenses;
+
   document.getElementById('totalIncome').textContent = '€' + totalIncome.toFixed(2);
   document.getElementById('totalExpenses').textContent = '€' + totalExpenses.toFixed(2);
-  document.getElementById('totalDebts').textContent = '€' + totalDebts.toFixed(2);
-  const savingsEl = document.getElementById('netSavings');
-  savingsEl.textContent = '€' + netSavings.toFixed(2);
-  savingsEl.className = 'metric-value ' + (netSavings >= 0 ? 'positive' : 'negative');
+  
+  const savingsPercent = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
+  document.getElementById('netSavings').textContent = savingsPercent + '%';
+  const circle = document.querySelector('.circle');
+  circle.style.borderColor = savingsPercent >= 0 ? '#10b981' : '#ff6b6b';
+
   updateExpensesByCategory(monthKey);
 }
 
 function updateExpensesByCategory(monthKey) {
-  const monthExpenses = data.expenses[monthKey] || {};
+  const monthFixed = data.fixedByMonth[monthKey] || {};
+  const monthVariable = data.variable[monthKey] || {};
   const byCategory = {};
-  Object.entries(monthExpenses).forEach(([cat, items]) => {
-    byCategory[cat] = Object.values(items).reduce((a, item) => a + (item.amount || item), 0);
+  
+  Object.values(monthFixed).forEach(item => {
+    const cat = item.category || 'Fijos';
+    byCategory[cat] = (byCategory[cat] || 0) + item.amount;
   });
+  Object.values(monthVariable).forEach(item => {
+    const cat = item.category || 'Variables';
+    byCategory[cat] = (byCategory[cat] || 0) + item.amount;
+  });
+
   const html = Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([cat, total]) => `<tr><td>${cat}</td><td style="text-align: right;">€${total.toFixed(2)}</td></tr>`).join('');
   document.getElementById('expensesByCategory').innerHTML = html || '<tr><td colspan="2" style="text-align: center; color: #888; padding: 1rem;">Sin gastos</td></tr>';
 }
@@ -192,7 +337,7 @@ function updateExpensesByCategory(monthKey) {
 function updateIncomeUI(monthKey) {
   const monthIncome = data.income[monthKey] || {};
   const salary = monthIncome.salary || 0;
-  const html = salary ? `<div class="entry-item"><div class="entry-info"><div style="font-weight: 500;">Nómina</div><div class="entry-category">Mensual</div></div><div class="entry-amount positive">+€${salary.toFixed(2)}</div></div>` : '<p style="font-size: 13px; color: #888;">Sin ingresos registrados</p>';
+  const html = salary ? `<div class="entry-item"><div class="entry-info"><div class="entry-desc">Nómina</div><div class="entry-category">Ingreso mensual</div></div><div class="entry-amount" style="color: #10b981;">+€${salary.toFixed(2)}</div></div>` : '<p style="font-size: 13px; color: #888;">Sin ingresos registrados</p>';
   document.getElementById('incomeList').innerHTML = html;
 }
 
@@ -204,147 +349,167 @@ function saveSalary() {
   data.income[monthKey].salary = salary;
   saveData();
   document.getElementById('salary').value = '';
-  switchTab('income');
+  switchTab('ingresos');
 }
 
-function updateExpensesUI(monthKey) {
-  const categorySelect = document.getElementById('expenseCategory');
-  categorySelect.innerHTML = '<option value="">Selecciona categoría</option>' + data.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-  const monthExpenses = data.expenses[monthKey] || {};
-  const items = [];
-  Object.entries(monthExpenses).forEach(([cat, expenseItems]) => {
-    Object.entries(expenseItems).forEach(([id, exp]) => {
-      items.push({ ...exp, category: cat, id });
-    });
-  });
-  const html = items.length ? items.map(exp => `<div class="entry-item"><div class="entry-info"><div style="font-weight: 500;">${exp.description || 'Sin descripción'}</div><div class="entry-category">${exp.category}</div></div><div style="display: flex; gap: 0.5rem; align-items: center;"><span class="entry-amount">-€${exp.amount.toFixed(2)}</span><button class="delete-btn" onclick="deleteExpense('${exp.category}', '${exp.id}')">✕</button></div></div>`).join('') : '<p style="font-size: 13px; color: #888;">Sin gastos registrados</p>';
-  document.getElementById('expensesList').innerHTML = html;
+function updateFixedUI(monthKey) {
+  const monthFixed = data.fixedByMonth[monthKey] || {};
+  const freqMap = { monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual' };
+  
+  const html = Object.entries(monthFixed).map(([id, item]) => 
+    `<div class="entry-item"><div class="entry-info"><div class="entry-desc">${item.desc}</div><div class="entry-category">${item.category}</div><div class="entry-meta">${freqMap[item.frequency]} - Día ${item.day}</div></div><div style="display: flex; gap: 0.5rem; align-items: center;"><span class="entry-amount">-€${item.amount.toFixed(2)}</span></div></div>`
+  ).join('') || '<p style="font-size: 13px; color: #888;">Sin gastos fijos este mes</p>';
+  document.getElementById('fixedList').innerHTML = html;
 }
 
-function addExpense() {
-  const category = document.getElementById('expenseCategory').value;
-  const newCat = document.getElementById('newCategory').value.trim();
-  const amount = parseFloat(document.getElementById('expenseAmount').value);
-  const desc = document.getElementById('expenseDesc').value.trim();
-  let finalCategory = category;
-  if (newCat) { finalCategory = newCat; if (!data.categories.includes(newCat)) data.categories.push(newCat); }
-  if (!finalCategory || !amount || amount <= 0) { alert('Completa los campos'); return; }
+function updateVariableUI(monthKey) {
+  const categorySelect = document.getElementById('varCategory');
+  categorySelect.innerHTML = '<option value="">Selecciona</option>' + data.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+  const monthVariable = data.variable[monthKey] || {};
+  const html = Object.entries(monthVariable).map(([id, item]) => 
+    `<div class="entry-item"><div class="entry-info"><div class="entry-desc">${item.desc}</div><div class="entry-category">${item.category}</div></div><div style="display: flex; gap: 0.5rem; align-items: center;"><span class="entry-amount">-€${item.amount.toFixed(2)}</span><button class="danger" onclick="deleteVariable('${id}')">✕</button></div></div>`
+  ).join('') || '<p style="font-size: 13px; color: #888;">Sin gastos variables</p>';
+  document.getElementById('varList').innerHTML = html;
+}
+
+function addVariableExpense() {
+  const desc = document.getElementById('varDesc').value.trim();
+  const amount = parseFloat(document.getElementById('varAmount').value);
+  const category = document.getElementById('varCategory').value;
+  if (!desc || !amount || !category) { alert('Completa todos los campos'); return; }
   const monthKey = getMonthKey(currentMonth);
-  if (!data.expenses[monthKey]) data.expenses[monthKey] = {};
-  if (!data.expenses[monthKey][finalCategory]) data.expenses[monthKey][finalCategory] = {};
-  data.expenses[monthKey][finalCategory][Date.now()] = { amount, description: desc };
+  if (!data.variable[monthKey]) data.variable[monthKey] = {};
+  data.variable[monthKey][Date.now()] = { desc, amount, category };
   saveData();
-  document.getElementById('expenseCategory').value = '';
-  document.getElementById('newCategory').value = '';
-  document.getElementById('expenseAmount').value = '';
-  document.getElementById('expenseDesc').value = '';
-  switchTab('expenses');
+  document.getElementById('varDesc').value = '';
+  document.getElementById('varAmount').value = '';
+  document.getElementById('varCategory').value = '';
+  switchTab('gastos-variables');
 }
 
-function deleteExpense(category, id) {
+function deleteVariable(id) {
   const monthKey = getMonthKey(currentMonth);
-  if (data.expenses[monthKey] && data.expenses[monthKey][category]) {
-    delete data.expenses[monthKey][category][id];
-    if (Object.keys(data.expenses[monthKey][category]).length === 0) delete data.expenses[monthKey][category];
-    saveData();
-    switchTab('expenses');
+  delete data.variable[monthKey][id];
+  saveData();
+  switchTab('gastos-variables');
+}
+
+function updateLoansUI(monthKey) {
+  const categorySelect = document.getElementById('loanCategory');
+  categorySelect.innerHTML = '<option value="">Selecciona</option>' + data.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+  
+  const html = Object.entries(data.loans).map(([id, loan]) => {
+    const percent = loan.initial > 0 ? Math.max(0, Math.min(100, (1 - (loan.balance / loan.initial)) * 100)) : 0;
+    return `<div class="loan-item">
+      <div class="loan-header">
+        <div class="loan-title">${loan.name}</div>
+        <div class="loan-delete" onclick="deleteLoan('${id}')">✕</div>
+      </div>
+      <div class="loan-bar"><div class="loan-progress" style="width: ${percent}%"></div></div>
+      <div class="loan-info">
+        <div class="loan-info-item"><span class="loan-info-label">Saldo</span><span class="loan-info-value">€${loan.balance.toFixed(2)}</span></div>
+        <div class="loan-info-item"><span class="loan-info-label">Cuota</span><span class="loan-info-value">€${loan.payment.toFixed(2)}</span></div>
+        <div class="loan-info-item"><span class="loan-info-label">Hasta</span><span class="loan-info-value">${loan.endDate}</span></div>
+      </div>
+      <div class="loan-payment">
+        <div class="loan-payment-row">
+          <input type="number" id="paymentAmount_${id}" step="0.01" placeholder="Cantidad a pagar" value="${loan.payment}">
+          <button onclick="makePayment('${id}')" style="padding: 0.6rem 1rem;">Pagar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<p style="font-size: 13px; color: #888;">Sin préstamos registrados</p>';
+  document.getElementById('loansList').innerHTML = html;
+}
+
+function addLoan() {
+  const name = document.getElementById('loanName').value.trim();
+  const balance = parseFloat(document.getElementById('loanBalance').value);
+  const payment = parseFloat(document.getElementById('loanPayment').value);
+  const day = parseInt(document.getElementById('loanDay').value);
+  const category = document.getElementById('loanCategory').value;
+  const endDate = document.getElementById('loanEndDate').value;
+  
+  if (!name || !balance || !payment || !day || day < 1 || day > 31 || !category || !endDate) { 
+    alert('Completa todos los campos correctamente'); 
+    return; 
   }
-}
-
-function updateDebtsUI(monthKey) {
-  const monthDebts = data.debts[monthKey] || [];
-  const freqMap = { once: 'Una sola vez', monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual' };
-  const html = monthDebts.length ? monthDebts.map((d, idx) => `<div class="entry-item"><div class="entry-info"><div style="font-weight: 500;">${d.name}</div><div class="entry-category">${freqMap[d.frequency]}</div></div><div style="display: flex; gap: 0.5rem; align-items: center;"><span class="entry-amount">-€${d.amount.toFixed(2)}</span><button class="delete-btn" onclick="deleteDebt(${idx})">✕</button></div></div>`).join('') : '<p style="font-size: 13px; color: #888;">Sin deudas registradas</p>';
-  document.getElementById('debtsList').innerHTML = html;
-}
-
-function addDebt() {
-  const name = document.getElementById('debtName').value.trim();
-  const amount = parseFloat(document.getElementById('debtAmount').value);
-  const frequency = document.getElementById('debtFrequency').value;
-  if (!name || !amount || amount <= 0) { alert('Completa los campos'); return; }
-  const monthKey = getMonthKey(currentMonth);
-  if (!data.debts[monthKey]) data.debts[monthKey] = [];
-  data.debts[monthKey].push({ name, amount, frequency });
+  
+  const id = 'loan_' + Date.now();
+  data.loans[id] = { name, balance, initial: balance, payment, day, category, endDate };
+  
+  // Crear gastos fijos para cada mes desde ahora hasta la fecha de finalización
+  const startMonth = new Date();
+  const endMonth = new Date(endDate + '-01');
+  
+  for (let d = new Date(startMonth); d <= endMonth; d.setMonth(d.getMonth() + 1)) {
+    const monthKey = d.toISOString().slice(0, 7);
+    if (!data.fixedByMonth[monthKey]) data.fixedByMonth[monthKey] = {};
+    data.fixedByMonth[monthKey][id] = {
+      desc: name,
+      amount: payment,
+      category: category,
+      frequency: 'monthly',
+      day: day,
+      loanId: id
+    };
+  }
+  
   saveData();
-  document.getElementById('debtName').value = '';
-  document.getElementById('debtAmount').value = '';
-  document.getElementById('debtFrequency').value = 'once';
-  switchTab('debts');
+  document.getElementById('loanName').value = '';
+  document.getElementById('loanBalance').value = '';
+  document.getElementById('loanPayment').value = '';
+  document.getElementById('loanDay').value = '';
+  document.getElementById('loanCategory').value = '';
+  document.getElementById('loanEndDate').value = '';
+  switchTab('prestamos');
 }
 
-function deleteDebt(index) {
-  const monthKey = getMonthKey(currentMonth);
-  data.debts[monthKey].splice(index, 1);
+function deleteLoan(id) {
+  delete data.loans[id];
+  // Eliminar gastos fijos asociados
+  Object.keys(data.fixedByMonth).forEach(month => {
+    delete data.fixedByMonth[month][id];
+  });
   saveData();
-  switchTab('debts');
+  switchTab('prestamos');
+}
+
+function makePayment(id) {
+  const input = document.getElementById('paymentAmount_' + id);
+  const amount = parseFloat(input.value);
+  if (!amount || amount <= 0) { alert('Ingresa un monto válido'); return; }
+  if (amount > data.loans[id].balance) { alert('El monto supera el saldo pendiente'); return; }
+  data.loans[id].balance -= amount;
+  saveData();
+  switchTab('prestamos');
 }
 
 function updateHistory() {
   const allMonths = {};
-  Object.keys(data.expenses).forEach(month => {
-    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0, debts: 0 };
-    allMonths[month].expenses = Object.values(data.expenses[month]).reduce((sum, cats) => sum + Object.values(cats).reduce((a, item) => a + (item.amount || item), 0), 0);
-  });
   Object.keys(data.income).forEach(month => {
-    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0, debts: 0 };
+    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0 };
     allMonths[month].income = Object.values(data.income[month]).reduce((a, b) => a + b, 0);
   });
-  Object.keys(data.debts).forEach(month => {
-    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0, debts: 0 };
-    allMonths[month].debts = data.debts[month].reduce((a, d) => a + d.amount, 0);
+  
+  Object.keys(data.fixedByMonth).forEach(month => {
+    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0 };
+    allMonths[month].expenses += Object.values(data.fixedByMonth[month]).reduce((a, b) => a + b.amount, 0);
   });
-  const sortedMonths = Object.entries(allMonths).sort((a, b) => b[0].localeCompare(a[0]));
+  
+  Object.keys(data.variable).forEach(month => {
+    if (!allMonths[month]) allMonths[month] = { income: 0, expenses: 0 };
+    allMonths[month].expenses += Object.values(data.variable[month]).reduce((a, b) => a + b.amount, 0);
+  });
+  
+  const sortedMonths = Object.entries(allMonths).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
   const html = sortedMonths.map(([month, vals]) => {
-    const savings = vals.income - vals.expenses - vals.debts;
+    const savings = vals.income - vals.expenses;
     const [year, monthNum] = month.split('-');
     const monthName = new Date(year, monthNum - 1).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
-    return `<tr><td style="font-weight: 500;">${monthName}</td><td style="text-align: right;">€${vals.income.toFixed(2)}</td><td style="text-align: right;">€${vals.expenses.toFixed(2)}</td><td style="text-align: right;">€${vals.debts.toFixed(2)}</td><td style="text-align: right; color: ${savings >= 0 ? '#10b981' : '#ff6b6b'}; font-weight: 500;">€${savings.toFixed(2)}</td></tr>`;
+    return `<tr><td>${monthName}</td><td style="text-align: right;">€${vals.income.toFixed(2)}</td><td style="text-align: right;">€${vals.expenses.toFixed(2)}</td><td style="text-align: right; color: ${savings >= 0 ? '#10b981' : '#ff6b6b'}; font-weight: 500;">€${savings.toFixed(2)}</td></tr>`;
   }).join('');
   document.getElementById('annualSummary').innerHTML = html;
-}
-
-function updateStats() {
-  const now = new Date();
-  const year = now.getFullYear();
-  let yearIncome = 0, yearExpenses = 0, yearDebts = 0;
-  let monthCount = 0;
-  const yearCategories = {};
-  for (let m = 0; m < 12; m++) {
-    const monthDate = new Date(year, m);
-    const monthKey = monthDate.toISOString().slice(0, 7);
-    if (data.income[monthKey]) yearIncome += Object.values(data.income[monthKey]).reduce((a, b) => a + b, 0);
-    if (data.expenses[monthKey]) {
-      Object.entries(data.expenses[monthKey]).forEach(([cat, items]) => {
-        const catTotal = Object.values(items).reduce((a, item) => a + (item.amount || item), 0);
-        yearExpenses += catTotal;
-        yearCategories[cat] = (yearCategories[cat] || 0) + catTotal;
-      });
-    }
-    if (data.debts[monthKey]) yearDebts += data.debts[monthKey].reduce((a, d) => a + d.amount, 0);
-    if (data.income[monthKey] || data.expenses[monthKey] || data.debts[monthKey]) monthCount++;
-  }
-  const yearSavings = yearIncome - yearExpenses - yearDebts;
-  const avgMonths = monthCount || 1;
-  document.getElementById('yearTotalIncome').textContent = '€' + yearIncome.toFixed(2);
-  document.getElementById('yearTotalExpenses').textContent = '€' + yearExpenses.toFixed(2);
-  document.getElementById('yearTotalDebts').textContent = '€' + yearDebts.toFixed(2);
-  document.getElementById('yearNetSavings').textContent = '€' + yearSavings.toFixed(2);
-  document.getElementById('avgIncome').textContent = '€' + (yearIncome / avgMonths).toFixed(2);
-  document.getElementById('avgExpenses').textContent = '€' + (yearExpenses / avgMonths).toFixed(2);
-  document.getElementById('avgDebts').textContent = '€' + (yearDebts / avgMonths).toFixed(2);
-  document.getElementById('avgSavings').textContent = '€' + (yearSavings / avgMonths).toFixed(2);
-  const expRatio = yearIncome ? Math.round((yearExpenses / yearIncome) * 100) : 0;
-  const debtRatio = yearIncome ? Math.round((yearDebts / yearIncome) * 100) : 0;
-  const savRatio = yearIncome ? Math.round((yearSavings / yearIncome) * 100) : 0;
-  document.getElementById('expenseRatio').textContent = expRatio + '%';
-  document.getElementById('debtRatio').textContent = debtRatio + '%';
-  document.getElementById('savingRatio').textContent = savRatio + '%';
-  const catHtml = Object.entries(yearCategories).sort((a, b) => b[1] - a[1]).map(([cat, total]) => {
-    const pct = yearExpenses ? Math.round((total / yearExpenses) * 100) : 0;
-    return `<tr><td>${cat}</td><td style="text-align: right;">€${total.toFixed(2)}</td><td style="text-align: right;">${pct}%</td></tr>`;
-  }).join('');
-  document.getElementById('yearCategoryStats').innerHTML = catHtml || '<tr><td colspan="3" style="text-align: center; color: #888;">Sin datos</td></tr>';
 }
 
 function previousMonth() {
@@ -358,7 +523,6 @@ function nextMonth() {
 }
 
 updateUI();
-console.log('App iniciada. Datos:', data);
 </script>
 </body>
 </html>
