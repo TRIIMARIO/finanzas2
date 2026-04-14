@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestor de Finanzas Personales</title>
+<title>Gestor de Finanzas</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f7; color: #222; }
@@ -27,7 +27,6 @@ button { padding: 0.75rem 1rem; background: white; border: 1px solid #ddd; borde
 button:hover { background: #f7f7f7; }
 button.primary { background: #10b981; color: white; border-color: #10b981; }
 button.primary:hover { background: #059669; }
-button.danger { color: #ef4444; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
 .metric-card { background: #f9fafb; border: 1px solid #eee; border-radius: 6px; padding: 1rem; text-align: center; }
 .metric-label { font-size: 12px; color: #666; margin-bottom: 0.5rem; }
@@ -40,11 +39,9 @@ button.danger { color: #ef4444; }
 .entry-amount { font-weight: 500; }
 .delete-btn { background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.25rem 0.5rem; }
 .month-selector { display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; justify-content: center; }
-.month-selector button { padding: 0.5rem 0.75rem; font-size: 13px; }
 .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .summary-table th { background: #f9fafb; font-weight: 500; padding: 0.75rem; text-align: left; border-bottom: 1px solid #eee; }
 .summary-table td { padding: 0.75rem; border-bottom: 1px solid #eee; }
-.summary-table tr:hover { background: #f9fafb; }
 .stat-box { background: #f9fafb; border: 1px solid #eee; border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
 .stat-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
 .stat-row:last-child { border-bottom: none; }
@@ -57,10 +54,7 @@ button.danger { color: #ef4444; }
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1>💰 Finanzas personales</h1>
-  </div>
-  
+  <div class="header"><h1>💰 Finanzas personales</h1></div>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('home')">Resumen</button>
     <button class="tab-btn" onclick="switchTab('income')">Ingresos</button>
@@ -68,7 +62,6 @@ button.danger { color: #ef4444; }
     <button class="tab-btn" onclick="switchTab('debts')">Deudas</button>
     <button class="tab-btn" onclick="switchTab('stats')">Estadísticas</button>
   </div>
-
   <div class="tab-content active" id="home">
     <div class="card">
       <div class="month-selector">
@@ -77,205 +70,76 @@ button.danger { color: #ef4444; }
         <button onclick="nextMonth()">Siguiente →</button>
       </div>
       <div class="metric-grid">
-        <div class="metric-card">
-          <div class="metric-label">Ingresos</div>
-          <div class="metric-value positive" id="totalIncome">€0.00</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Gastos</div>
-          <div class="metric-value negative" id="totalExpenses">€0.00</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Deudas</div>
-          <div class="metric-value negative" id="totalDebts">€0.00</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Ahorro neto</div>
-          <div class="metric-value" id="netSavings">€0.00</div>
-        </div>
+        <div class="metric-card"><div class="metric-label">Ingresos</div><div class="metric-value positive" id="totalIncome">€0.00</div></div>
+        <div class="metric-card"><div class="metric-label">Gastos</div><div class="metric-value negative" id="totalExpenses">€0.00</div></div>
+        <div class="metric-card"><div class="metric-label">Deudas</div><div class="metric-value negative" id="totalDebts">€0.00</div></div>
+        <div class="metric-card"><div class="metric-label">Ahorro neto</div><div class="metric-value" id="netSavings">€0.00</div></div>
       </div>
     </div>
-
-    <div class="card">
-      <h2>Gastos por categoría</h2>
-      <table class="summary-table">
-        <thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead>
-        <tbody id="expensesByCategory"></tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Histórico anual</h2>
-      <table class="summary-table">
-        <thead>
-          <tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Deudas</th><th style="text-align: right;">Ahorro</th></tr>
-        </thead>
-        <tbody id="annualSummary"></tbody>
-      </table>
-    </div>
+    <div class="card"><h2>Gastos por categoría</h2><table class="summary-table"><thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead><tbody id="expensesByCategory"></tbody></table></div>
+    <div class="card"><h2>Histórico anual</h2><table class="summary-table"><thead><tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Deudas</th><th style="text-align: right;">Ahorro</th></tr></thead><tbody id="annualSummary"></tbody></table></div>
   </div>
-
   <div class="tab-content" id="income">
-    <div class="card">
-      <h2>Registrar nómina</h2>
-      <div class="form-group">
-        <label>Ingreso mensual (€)</label>
-        <input type="number" id="salary" step="0.01" placeholder="2500.00">
-      </div>
-      <button class="primary" onclick="saveSalary()">Guardar</button>
-    </div>
-    <div class="card">
-      <h2>Ingresos del mes</h2>
-      <div id="incomeList"></div>
-    </div>
+    <div class="card"><h2>Registrar nómina</h2><div class="form-group"><label>Ingreso mensual (€)</label><input type="number" id="salary" step="0.01" placeholder="2500.00"></div><button class="primary" onclick="saveSalary()">Guardar</button></div>
+    <div class="card"><h2>Ingresos del mes</h2><div id="incomeList"></div></div>
   </div>
-
   <div class="tab-content" id="expenses">
-    <div class="card">
-      <h2>Nuevo gasto</h2>
-      <div class="form-group">
-        <label>Categoría</label>
-        <select id="expenseCategory">
-          <option value="">Selecciona categoría</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Nueva categoría (opcional)</label>
-        <input type="text" id="newCategory" placeholder="Ej: Cine, Ropa...">
-      </div>
-      <div class="form-row">
-        <div><label>Cantidad (€)</label><input type="number" id="expenseAmount" step="0.01" placeholder="0.00"></div>
-        <div><label>Descripción</label><input type="text" id="expenseDesc" placeholder="Detalles"></div>
-      </div>
-      <button class="primary" onclick="addExpense()">Registrar</button>
-    </div>
-    <div class="card">
-      <h2>Gastos del mes</h2>
-      <div id="expensesList"></div>
-    </div>
+    <div class="card"><h2>Nuevo gasto</h2><div class="form-group"><label>Categoría</label><select id="expenseCategory"><option value="">Selecciona categoría</option></select></div><div class="form-group"><label>Nueva categoría (opcional)</label><input type="text" id="newCategory" placeholder="Ej: Cine, Ropa..."></div><div class="form-row"><div><label>Cantidad (€)</label><input type="number" id="expenseAmount" step="0.01" placeholder="0.00"></div><div><label>Descripción</label><input type="text" id="expenseDesc" placeholder="Detalles"></div></div><button class="primary" onclick="addExpense()">Registrar</button></div>
+    <div class="card"><h2>Gastos del mes</h2><div id="expensesList"></div></div>
   </div>
-
   <div class="tab-content" id="debts">
-    <div class="card">
-      <h2>Registrar pago</h2>
-      <div class="form-group">
-        <label>Nombre de la deuda</label>
-        <input type="text" id="debtName" placeholder="Ej: Tarjeta crédito...">
-      </div>
-      <div class="form-row">
-        <div><label>Cantidad (€)</label><input type="number" id="debtAmount" step="0.01" placeholder="0.00"></div>
-        <div>
-          <label>Frecuencia</label>
-          <select id="debtFrequency">
-            <option value="once">Una sola vez</option>
-            <option value="monthly">Mensual</option>
-            <option value="quarterly">Trimestral</option>
-            <option value="annual">Anual</option>
-          </select>
-        </div>
-      </div>
-      <button class="primary" onclick="addDebt()">Registrar</button>
-    </div>
-    <div class="card">
-      <h2>Pagos registrados</h2>
-      <div id="debtsList"></div>
-    </div>
+    <div class="card"><h2>Registrar pago</h2><div class="form-group"><label>Nombre de la deuda</label><input type="text" id="debtName" placeholder="Ej: Tarjeta crédito..."></div><div class="form-row"><div><label>Cantidad (€)</label><input type="number" id="debtAmount" step="0.01" placeholder="0.00"></div><div><label>Frecuencia</label><select id="debtFrequency"><option value="once">Una sola vez</option><option value="monthly">Mensual</option><option value="quarterly">Trimestral</option><option value="annual">Anual</option></select></div></div><button class="primary" onclick="addDebt()">Registrar</button></div>
+    <div class="card"><h2>Pagos registrados</h2><div id="debtsList"></div></div>
   </div>
-
   <div class="tab-content" id="stats">
-    <div class="card">
-      <h2>Resumen anual</h2>
-      <div class="stat-box">
-        <div class="stat-row">
-          <span class="stat-label"><span class="color-bar bar-income"></span>Ingresos totales</span>
-          <span style="font-weight: 500; color: #10b981;" id="yearTotalIncome">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label"><span class="color-bar bar-expense"></span>Gastos totales</span>
-          <span style="font-weight: 500; color: #ef4444;" id="yearTotalExpenses">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label"><span class="color-bar bar-debt"></span>Deudas totales</span>
-          <span style="font-weight: 500; color: #ef4444;" id="yearTotalDebts">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Ahorro anual</span>
-          <span style="font-weight: 500;" id="yearNetSavings">€0.00</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Promedio mensual</h2>
-      <div class="stat-box">
-        <div class="stat-row">
-          <span class="stat-label">Ingresos promedio</span>
-          <span style="font-weight: 500; color: #10b981;" id="avgIncome">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Gastos promedio</span>
-          <span style="font-weight: 500; color: #ef4444;" id="avgExpenses">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Deudas promedio</span>
-          <span style="font-weight: 500; color: #ef4444;" id="avgDebts">€0.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Ahorro promedio</span>
-          <span style="font-weight: 500;" id="avgSavings">€0.00</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Porcentajes (de ingresos)</h2>
-      <div class="stat-box">
-        <div class="stat-row">
-          <span class="stat-label">Gastos vs ingresos</span>
-          <span style="font-weight: 500;" id="expenseRatio">0%</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Deudas vs ingresos</span>
-          <span style="font-weight: 500;" id="debtRatio">0%</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Ahorro vs ingresos</span>
-          <span style="font-weight: 500; color: #10b981;" id="savingRatio">0%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Categorías (año completo)</h2>
-      <table class="summary-table">
-        <thead><tr><th>Categoría</th><th style="text-align: right;">Total</th><th style="text-align: right;">%</th></tr></thead>
-        <tbody id="yearCategoryStats"></tbody>
-      </table>
-    </div>
+    <div class="card"><h2>Resumen anual</h2><div class="stat-box"><div class="stat-row"><span class="stat-label"><span class="color-bar bar-income"></span>Ingresos totales</span><span style="font-weight: 500; color: #10b981;" id="yearTotalIncome">€0.00</span></div><div class="stat-row"><span class="stat-label"><span class="color-bar bar-expense"></span>Gastos totales</span><span style="font-weight: 500; color: #ef4444;" id="yearTotalExpenses">€0.00</span></div><div class="stat-row"><span class="stat-label"><span class="color-bar bar-debt"></span>Deudas totales</span><span style="font-weight: 500; color: #ef4444;" id="yearTotalDebts">€0.00</span></div><div class="stat-row"><span class="stat-label">Ahorro anual</span><span style="font-weight: 500;" id="yearNetSavings">€0.00</span></div></div></div>
+    <div class="card"><h2>Promedio mensual</h2><div class="stat-box"><div class="stat-row"><span class="stat-label">Ingresos promedio</span><span style="font-weight: 500; color: #10b981;" id="avgIncome">€0.00</span></div><div class="stat-row"><span class="stat-label">Gastos promedio</span><span style="font-weight: 500; color: #ef4444;" id="avgExpenses">€0.00</span></div><div class="stat-row"><span class="stat-label">Deudas promedio</span><span style="font-weight: 500; color: #ef4444;" id="avgDebts">€0.00</span></div><div class="stat-row"><span class="stat-label">Ahorro promedio</span><span style="font-weight: 500;" id="avgSavings">€0.00</span></div></div></div>
+    <div class="card"><h2>Porcentajes</h2><div class="stat-box"><div class="stat-row"><span class="stat-label">Gastos vs ingresos</span><span style="font-weight: 500;" id="expenseRatio">0%</span></div><div class="stat-row"><span class="stat-label">Deudas vs ingresos</span><span style="font-weight: 500;" id="debtRatio">0%</span></div><div class="stat-row"><span class="stat-label">Ahorro vs ingresos</span><span style="font-weight: 500; color: #10b981;" id="savingRatio">0%</span></div></div></div>
+    <div class="card"><h2>Categorías (año)</h2><table class="summary-table"><thead><tr><th>Categoría</th><th style="text-align: right;">Total</th><th style="text-align: right;">%</th></tr></thead><tbody id="yearCategoryStats"></tbody></table></div>
   </div>
 </div>
-
 <script>
-const STORAGE_KEY = 'finanzas_data';
+try {
+  if (!window.localStorage) {
+    window.localStorage = {};
+  }
+} catch(e) {
+  console.log('localStorage no disponible, usando fallback');
+}
+
+const STORAGE_KEY = 'finanzas_data_v2';
 let currentMonth = new Date();
 let data = loadData();
 
 function loadData() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : {
-    expenses: {},
-    income: {},
-    debts: {},
-    categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios']
-  };
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      console.log('Datos cargados:', parsed);
+      return parsed;
+    }
+  } catch(e) {
+    console.log('Error al cargar:', e);
+  }
+  return { expenses: {}, income: {}, debts: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] };
 }
 
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    const json = JSON.stringify(data);
+    localStorage.setItem(STORAGE_KEY, json);
+    console.log('Datos guardados:', json.length, 'caracteres');
+  } catch(e) {
+    console.log('Error al guardar:', e);
+    alert('Error guardando datos: ' + e.message);
+  }
 }
 
-function getMonthKey(date) {
-  return date.toISOString().slice(0, 7);
+window.addEventListener('beforeunload', saveData);
+
+function getMonthKey(date) { 
+  return date.toISOString().slice(0, 7); 
 }
 
 function switchTab(tab) {
@@ -301,20 +165,16 @@ function updateMetrics(monthKey) {
   const monthIncome = data.income[monthKey] || {};
   const monthExpenses = data.expenses[monthKey] || {};
   const monthDebts = data.debts[monthKey] || [];
-
   const totalIncome = Object.values(monthIncome).reduce((a, b) => a + b, 0);
   const totalExpenses = Object.values(monthExpenses).reduce((sum, cats) => sum + Object.values(cats).reduce((a, b) => a + (b.amount || b), 0), 0);
   const totalDebts = monthDebts.reduce((a, d) => a + d.amount, 0);
   const netSavings = totalIncome - totalExpenses - totalDebts;
-
   document.getElementById('totalIncome').textContent = '€' + totalIncome.toFixed(2);
   document.getElementById('totalExpenses').textContent = '€' + totalExpenses.toFixed(2);
   document.getElementById('totalDebts').textContent = '€' + totalDebts.toFixed(2);
-  
   const savingsEl = document.getElementById('netSavings');
   savingsEl.textContent = '€' + netSavings.toFixed(2);
   savingsEl.className = 'metric-value ' + (netSavings >= 0 ? 'positive' : 'negative');
-
   updateExpensesByCategory(monthKey);
 }
 
@@ -497,6 +357,7 @@ function nextMonth() {
 }
 
 updateUI();
+console.log('App iniciada. Datos:', data);
 </script>
 </body>
 </html>
