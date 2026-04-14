@@ -8,19 +8,36 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); color: #e0e0e0; display: flex; flex-direction: column; }
+.login-container { display: flex; align-items: center; justify-content: center; height: 100vh; }
+.login-card { background: rgba(26, 31, 46, 0.8); border: 1px solid #2a3548; border-radius: 16px; padding: 2rem; width: 90%; max-width: 400px; backdrop-filter: blur(10px); }
+.login-title { font-size: 28px; color: #10b981; margin-bottom: 1rem; text-align: center; }
+.login-subtitle { font-size: 12px; color: #888; margin-bottom: 2rem; text-align: center; }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group input { width: 100%; padding: 0.85rem; border: 1px solid #333; border-radius: 8px; font-size: 14px; background: rgba(34, 34, 34, 0.8); color: #e0e0e0; }
+.form-group input:focus { outline: none; border-color: #10b981; background: rgba(34, 34, 34, 0.95); }
+.login-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+button { padding: 0.85rem 1.5rem; background: #10b981; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; color: white; }
+button:hover { background: #059669; }
+button.secondary { background: transparent; border: 1px solid #333; color: #e0e0e0; }
+button.secondary:hover { background: rgba(51, 51, 51, 0.5); }
+.error { color: #ff6b6b; font-size: 12px; margin-top: 0.5rem; }
+.app-container { flex: 1; max-width: 1000px; width: 100%; margin: 0 auto; padding: 1rem 1rem 100px 1rem; overflow-y: auto; display: none; }
+.app-container.active { display: flex; flex-direction: column; }
 .container { flex: 1; max-width: 1000px; width: 100%; margin: 0 auto; padding: 1rem 1rem 100px 1rem; overflow-y: auto; }
-.header { padding-bottom: 1rem; margin-bottom: 1.5rem; }
-.header h1 { font-size: 24px; color: #10b981; margin-bottom: 0.25rem; }
-.header-subtitle { font-size: 12px; color: #888; }
+.header { padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 24px; color: #10b981; margin: 0; }
+.logout-btn { background: transparent; border: 1px solid #333; color: #e0e0e0; padding: 0.5rem 1rem; font-size: 12px; width: auto; }
+.logout-btn:hover { background: rgba(51, 51, 51, 0.5); }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 .card { background: rgba(26, 31, 46, 0.8); border: 1px solid #2a3548; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(10px); }
 .card h2 { font-size: 14px; margin-bottom: 1.5rem; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
 .month-selector { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; align-items: center; justify-content: center; }
-.month-selector button { padding: 0.5rem 1rem; font-size: 12px; background: rgba(34, 34, 34, 0.8); border: 1px solid #333; color: #e0e0e0; border-radius: 6px; cursor: pointer; }
+.month-selector button { padding: 0.5rem 1rem; font-size: 12px; background: rgba(34, 34, 34, 0.8); border: 1px solid #333; color: #e0e0e0; border-radius: 6px; cursor: pointer; width: auto; }
 .month-display { font-weight: 600; min-width: 150px; text-align: center; color: #10b981; font-size: 13px; }
 .summary-circle { text-align: center; margin: 1.5rem 0; }
-.circle { width: 140px; height: 140px; border-radius: 50%; border: 3px solid #10b981; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative; }
+.circle { width: 140px; height: 140px; border-radius: 50%; border: 3px solid #10b981; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; }
 .circle-value { font-size: 32px; font-weight: 700; color: #10b981; }
 .circle-label { font-size: 11px; color: #888; text-transform: uppercase; margin-top: 0.5rem; letter-spacing: 0.5px; }
 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
@@ -32,7 +49,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .annual-summary { background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
 .annual-title { font-size: 12px; color: #888; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 .annual-items { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.annual-item { }
 .annual-item-label { font-size: 11px; color: #666; margin-bottom: 0.5rem; }
 .annual-item-value { font-size: 18px; font-weight: 700; color: #10b981; }
 .annual-item.negative .annual-item-value { color: #ff6b6b; }
@@ -51,13 +67,11 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
 .entry-info { flex: 1; }
 .entry-desc { font-weight: 500; font-size: 14px; margin-bottom: 0.25rem; }
 .entry-category { font-size: 11px; color: #888; }
-.entry-meta { font-size: 10px; color: #666; margin-top: 0.25rem; }
 .entry-amount { font-weight: 700; font-size: 14px; }
 .table-wrapper { overflow-x: auto; }
 .summary-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .summary-table th { background: rgba(16, 185, 129, 0.08); font-weight: 600; padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px; }
 .summary-table td { padding: 0.75rem; border-bottom: 1px solid #333; }
-.summary-table tr:hover { background: rgba(16, 185, 129, 0.05); }
 .loan-item { background: rgba(34, 34, 34, 0.8); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #333; }
 .loan-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
 .loan-title { font-weight: 600; font-size: 14px; }
@@ -65,7 +79,6 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
 .loan-bar { background: rgba(255,107,107,0.1); border-radius: 4px; height: 8px; margin-bottom: 0.5rem; overflow: hidden; }
 .loan-progress { background: #10b981; height: 100%; border-radius: 4px; }
 .loan-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; font-size: 11px; color: #888; margin-bottom: 1rem; }
-.loan-info-item { }
 .loan-info-label { display: block; color: #666; margin-bottom: 0.25rem; }
 .loan-info-value { font-weight: 600; color: #10b981; font-size: 13px; }
 .loan-payment { background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 8px; padding: 0.75rem; }
@@ -80,180 +93,235 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
 </style>
 </head>
 <body>
-<div class="container">
-  <!-- RESUMEN -->
-  <div class="tab-content active" id="resumen">
-    <div class="header">
-      <h1>Tu dinero</h1>
-      <div class="header-subtitle">Control de finanzas personales</div>
-    </div>
 
-    <div class="card">
-      <div class="month-selector">
-        <button class="secondary" onclick="previousMonth()">← Anterior</button>
-        <span class="month-display" id="currentMonth"></span>
-        <button class="secondary" onclick="nextMonth()">Siguiente →</button>
-      </div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-container">
+  <div class="login-card">
+    <h1 class="login-title">💰 Finanzas</h1>
+    <p class="login-subtitle">Gestiona tu dinero de forma segura</p>
+    
+    <div class="form-group">
+      <label>Usuario</label>
+      <input type="text" id="loginUser" placeholder="Ej: juan@example.com" autocomplete="off">
     </div>
-
-    <div class="card">
-      <div class="summary-circle">
-        <div class="circle">
-          <div class="circle-value" id="netSavings">0%</div>
-          <div class="circle-label">Ahorro</div>
-        </div>
-      </div>
+    
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="Contraseña segura">
     </div>
-
-    <div class="card">
-      <div class="summary-grid">
-        <div class="summary-box">
-          <div class="summary-label">Ingresos</div>
-          <div class="summary-value" id="totalIncome">€0.00</div>
-        </div>
-        <div class="summary-box negative">
-          <div class="summary-label">Gastos</div>
-          <div class="summary-value" id="totalExpenses">€0.00</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="annual-summary">
-        <div class="annual-title">Resumen anual acumulado</div>
-        <div class="annual-items">
-          <div class="annual-item">
-            <div class="annual-item-label">Ingresos año</div>
-            <div class="annual-item-value" id="yearIncome">€0.00</div>
-          </div>
-          <div class="annual-item negative">
-            <div class="annual-item-label">Gastos año</div>
-            <div class="annual-item-value" id="yearExpenses">€0.00</div>
-          </div>
-          <div class="annual-item">
-            <div class="annual-item-label">Ahorrado acumulado</div>
-            <div class="annual-item-value" id="yearSavings">€0.00</div>
-          </div>
-          <div class="annual-item">
-            <div class="annual-item-label">% ahorrado</div>
-            <div class="annual-item-value" id="yearSavingsPercent">0%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Gastos por categoría</h2>
-      <div class="table-wrapper">
-        <table class="summary-table">
-          <thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead>
-          <tbody id="expensesByCategory"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Últimos 12 meses</h2>
-      <div class="table-wrapper">
-        <table class="summary-table">
-          <thead><tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Ahorro</th></tr></thead>
-          <tbody id="annualSummary"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- INGRESOS -->
-  <div class="tab-content" id="ingresos">
-    <div class="header">
-      <h1>Ingresos</h1>
-      <div class="header-subtitle">Gestiona tus ingresos mensuales</div>
-    </div>
-
-    <div class="card">
-      <h2>Registrar nómina</h2>
-      <div class="form-group">
-        <label>Ingreso mensual (€)</label>
-        <input type="number" id="salary" step="0.01" placeholder="2500.00">
-      </div>
-      <button onclick="saveSalary()">Guardar nómina</button>
-    </div>
-    <div class="card">
-      <h2>Ingresos del mes</h2>
-      <div id="incomeList"></div>
-    </div>
-  </div>
-
-  <!-- GASTOS FIJOS -->
-  <div class="tab-content" id="gastos-fijos">
-    <div class="header">
-      <h1>Gastos fijos</h1>
-      <div class="header-subtitle">Pagos recurrentes</div>
-    </div>
-
-    <div class="card">
-      <h2>Gastos fijos del mes</h2>
-      <div id="fixedList"></div>
-    </div>
-  </div>
-
-  <!-- GASTOS VARIABLES -->
-  <div class="tab-content" id="gastos-variables">
-    <div class="header">
-      <h1>Gastos variables</h1>
-      <div class="header-subtitle">Gastos ocasionales</div>
-    </div>
-
-    <div class="card">
-      <h2>Nuevo gasto variable</h2>
-      <div class="form-group">
-        <label>Descripción</label>
-        <input type="text" id="varDesc" placeholder="Ej: Cena, Compras...">
-      </div>
-      <div class="form-row">
-        <div><label>Cantidad (€)</label><input type="number" id="varAmount" step="0.01" placeholder="0.00"></div>
-        <div><label>Categoría</label><select id="varCategory"><option value="">Selecciona</option></select></div>
-      </div>
-      <button onclick="addVariableExpense()">Registrar gasto variable</button>
-    </div>
-    <div class="card">
-      <h2>Gastos variables del mes</h2>
-      <div id="varList"></div>
-    </div>
-  </div>
-
-  <!-- PRÉSTAMOS -->
-  <div class="tab-content" id="prestamos">
-    <div class="header">
-      <h1>Préstamos</h1>
-      <div class="header-subtitle">Control de deudas y pagos</div>
-    </div>
-
-    <div class="card">
-      <h2>Nuevo préstamo</h2>
-      <div class="form-group">
-        <label>Nombre del préstamo</label>
-        <input type="text" id="loanName" placeholder="Ej: Hipoteca, Coche...">
-      </div>
-      <div class="form-row">
-        <div><label>Saldo inicial (€)</label><input type="number" id="loanBalance" step="0.01" placeholder="0.00"></div>
-        <div><label>Cuota mensual (€)</label><input type="number" id="loanPayment" step="0.01" placeholder="0.00"></div>
-      </div>
-      <div class="form-row-3">
-        <div><label>Día del mes</label><input type="number" id="loanDay" min="1" max="31" placeholder="15"></div>
-        <div><label>Categoría</label><select id="loanCategory"><option value="">Selecciona</option></select></div>
-        <div><label>Fecha finalización</label><input type="month" id="loanEndDate"></div>
-      </div>
-      <button onclick="addLoan()">Crear préstamo</button>
-    </div>
-    <div class="card">
-      <h2>Tus préstamos</h2>
-      <div id="loansList"></div>
+    
+    <div id="loginError" class="error"></div>
+    
+    <div class="login-buttons">
+      <button onclick="login()">Acceder</button>
+      <button class="secondary" onclick="toggleRegister()">Registrarse</button>
     </div>
   </div>
 </div>
 
-<div class="bottom-nav">
+<!-- REGISTER SCREEN -->
+<div id="registerScreen" class="login-container" style="display: none;">
+  <div class="login-card">
+    <h1 class="login-title">Crear cuenta</h1>
+    <p class="login-subtitle">Registrate para empezar</p>
+    
+    <div class="form-group">
+      <label>Usuario</label>
+      <input type="text" id="regUser" placeholder="Tu usuario" autocomplete="off">
+    </div>
+    
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="regPass" placeholder="Contraseña segura">
+    </div>
+    
+    <div class="form-group">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="regPassConfirm" placeholder="Repite la contraseña">
+    </div>
+    
+    <div id="registerError" class="error"></div>
+    
+    <div class="login-buttons">
+      <button onclick="register()">Crear cuenta</button>
+      <button class="secondary" onclick="toggleRegister()">Volver</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="appScreen" class="app-container">
+  <div class="container">
+    <!-- RESUMEN -->
+    <div class="tab-content active" id="resumen">
+      <div class="header">
+        <h1>Tu dinero</h1>
+        <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+      </div>
+
+      <div class="card">
+        <div class="month-selector">
+          <button class="secondary" onclick="previousMonth()">← Anterior</button>
+          <span class="month-display" id="currentMonth"></span>
+          <button class="secondary" onclick="nextMonth()">Siguiente →</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="summary-circle">
+          <div class="circle">
+            <div class="circle-value" id="netSavings">0%</div>
+            <div class="circle-label">Ahorro</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="summary-grid">
+          <div class="summary-box">
+            <div class="summary-label">Ingresos</div>
+            <div class="summary-value" id="totalIncome">€0.00</div>
+          </div>
+          <div class="summary-box negative">
+            <div class="summary-label">Gastos</div>
+            <div class="summary-value" id="totalExpenses">€0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="annual-summary">
+          <div class="annual-title">Resumen anual acumulado</div>
+          <div class="annual-items">
+            <div class="annual-item">
+              <div class="annual-item-label">Ingresos año</div>
+              <div class="annual-item-value" id="yearIncome">€0.00</div>
+            </div>
+            <div class="annual-item negative">
+              <div class="annual-item-label">Gastos año</div>
+              <div class="annual-item-value" id="yearExpenses">€0.00</div>
+            </div>
+            <div class="annual-item">
+              <div class="annual-item-label">Ahorrado acumulado</div>
+              <div class="annual-item-value" id="yearSavings">€0.00</div>
+            </div>
+            <div class="annual-item">
+              <div class="annual-item-label">% ahorrado</div>
+              <div class="annual-item-value" id="yearSavingsPercent">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Gastos por categoría</h2>
+        <div class="table-wrapper">
+          <table class="summary-table">
+            <thead><tr><th>Categoría</th><th style="text-align: right;">Cantidad</th></tr></thead>
+            <tbody id="expensesByCategory"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Últimos 12 meses</h2>
+        <div class="table-wrapper">
+          <table class="summary-table">
+            <thead><tr><th>Mes</th><th style="text-align: right;">Ingresos</th><th style="text-align: right;">Gastos</th><th style="text-align: right;">Ahorro</th></tr></thead>
+            <tbody id="annualSummary"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INGRESOS -->
+    <div class="tab-content" id="ingresos">
+      <div class="header">
+        <h1>Ingresos</h1>
+      </div>
+
+      <div class="card">
+        <h2>Registrar nómina</h2>
+        <div class="form-group">
+          <label>Ingreso mensual (€)</label>
+          <input type="number" id="salary" step="0.01" placeholder="2500.00">
+        </div>
+        <button onclick="saveSalary()">Guardar nómina</button>
+      </div>
+      <div class="card">
+        <h2>Ingresos del mes</h2>
+        <div id="incomeList"></div>
+      </div>
+    </div>
+
+    <!-- GASTOS FIJOS -->
+    <div class="tab-content" id="gastos-fijos">
+      <div class="header">
+        <h1>Gastos fijos</h1>
+      </div>
+
+      <div class="card">
+        <h2>Gastos fijos del mes</h2>
+        <div id="fixedList"></div>
+      </div>
+    </div>
+
+    <!-- GASTOS VARIABLES -->
+    <div class="tab-content" id="gastos-variables">
+      <div class="header">
+        <h1>Gastos variables</h1>
+      </div>
+
+      <div class="card">
+        <h2>Nuevo gasto variable</h2>
+        <div class="form-group">
+          <label>Descripción</label>
+          <input type="text" id="varDesc" placeholder="Ej: Cena, Compras...">
+        </div>
+        <div class="form-row">
+          <div><label>Cantidad (€)</label><input type="number" id="varAmount" step="0.01" placeholder="0.00"></div>
+          <div><label>Categoría</label><select id="varCategory"><option value="">Selecciona</option></select></div>
+        </div>
+        <button onclick="addVariableExpense()">Registrar gasto variable</button>
+      </div>
+      <div class="card">
+        <h2>Gastos variables del mes</h2>
+        <div id="varList"></div>
+      </div>
+    </div>
+
+    <!-- PRÉSTAMOS -->
+    <div class="tab-content" id="prestamos">
+      <div class="header">
+        <h1>Préstamos</h1>
+      </div>
+
+      <div class="card">
+        <h2>Nuevo préstamo</h2>
+        <div class="form-group">
+          <label>Nombre del préstamo</label>
+          <input type="text" id="loanName" placeholder="Ej: Hipoteca, Coche...">
+        </div>
+        <div class="form-row">
+          <div><label>Saldo inicial (€)</label><input type="number" id="loanBalance" step="0.01" placeholder="0.00"></div>
+          <div><label>Cuota mensual (€)</label><input type="number" id="loanPayment" step="0.01" placeholder="0.00"></div>
+        </div>
+        <div class="form-row-3">
+          <div><label>Día del mes</label><input type="number" id="loanDay" min="1" max="31" placeholder="15"></div>
+          <div><label>Categoría</label><select id="loanCategory"><option value="">Selecciona</option></select></div>
+          <div><label>Fecha finalización</label><input type="month" id="loanEndDate"></div>
+        </div>
+        <button onclick="addLoan()">Crear préstamo</button>
+      </div>
+      <div class="card">
+        <h2>Tus préstamos</h2>
+        <div id="loansList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav" id="bottomNav" style="display: none;">
   <div class="nav-item active" onclick="switchTab('resumen')">
     <div class="nav-icon">📊</div>
     <div class="nav-label">Resumen</div>
@@ -277,27 +345,127 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
 </div>
 
 <script>
-const STORAGE_KEY = 'finanzas_data_v8';
+const STORAGE_KEY = 'finanzas_users';
+let currentUser = null;
 let currentMonth = new Date();
-let data = loadData();
+let data = {};
 
-function loadData() {
+// Cargar usuarios existentes
+function loadUsers() {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch(e) {}
-  return { income: {}, fixedByMonth: {}, variable: {}, loans: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] };
-}
-
-function saveData() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
   } catch(e) {
-    alert('Error: ' + e.message);
+    return {};
   }
 }
 
-window.addEventListener('beforeunload', saveData);
+// Guardar usuarios
+function saveUsers(users) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+}
+
+// Guardar datos del usuario actual
+function saveUserData() {
+  if (!currentUser) return;
+  const users = loadUsers();
+  users[currentUser].data = data;
+  saveUsers(users);
+}
+
+function login() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errorEl = document.getElementById('loginError');
+  
+  if (!user || !pass) { 
+    errorEl.textContent = 'Completa usuario y contraseña';
+    return; 
+  }
+  
+  const users = loadUsers();
+  if (!users[user]) {
+    errorEl.textContent = 'Usuario no encontrado';
+    return;
+  }
+  
+  if (users[user].password !== pass) {
+    errorEl.textContent = 'Contraseña incorrecta';
+    return;
+  }
+  
+  currentUser = user;
+  data = users[user].data || { income: {}, fixedByMonth: {}, variable: {}, loans: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] };
+  
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').classList.add('active');
+  document.getElementById('bottomNav').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  errorEl.textContent = '';
+  
+  updateUI();
+}
+
+function toggleRegister() {
+  document.getElementById('loginScreen').style.display = document.getElementById('loginScreen').style.display === 'none' ? 'flex' : 'none';
+  document.getElementById('registerScreen').style.display = document.getElementById('registerScreen').style.display === 'none' ? 'flex' : 'none';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('registerError').textContent = '';
+}
+
+function register() {
+  const user = document.getElementById('regUser').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const passConfirm = document.getElementById('regPassConfirm').value;
+  const errorEl = document.getElementById('registerError');
+  
+  if (!user || !pass) {
+    errorEl.textContent = 'Completa usuario y contraseña';
+    return;
+  }
+  
+  if (pass !== passConfirm) {
+    errorEl.textContent = 'Las contraseñas no coinciden';
+    return;
+  }
+  
+  if (pass.length < 4) {
+    errorEl.textContent = 'La contraseña debe tener al menos 4 caracteres';
+    return;
+  }
+  
+  const users = loadUsers();
+  if (users[user]) {
+    errorEl.textContent = 'Este usuario ya existe';
+    return;
+  }
+  
+  users[user] = {
+    password: pass,
+    data: { income: {}, fixedByMonth: {}, variable: {}, loans: {}, categories: ['Alimentación', 'Transporte', 'Vivienda', 'Ocio', 'Salud', 'Servicios'] }
+  };
+  
+  saveUsers(users);
+  
+  document.getElementById('regUser').value = '';
+  document.getElementById('regPass').value = '';
+  document.getElementById('regPassConfirm').value = '';
+  errorEl.textContent = '';
+  errorEl.parentElement.style.color = '#10b981';
+  errorEl.textContent = 'Cuenta creada. Ahora inicia sesión.';
+  
+  setTimeout(() => toggleRegister(), 2000);
+}
+
+function logout() {
+  saveUserData();
+  currentUser = null;
+  data = {};
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appScreen').classList.remove('active');
+  document.getElementById('bottomNav').style.display = 'none';
+  switchTab('resumen');
+}
 
 function getMonthKey(date) { return date.toISOString().slice(0, 7); }
 
@@ -338,7 +506,7 @@ function updateMetrics(monthKey) {
   const savingsPercent = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
   document.getElementById('netSavings').textContent = savingsPercent + '%';
   const circle = document.querySelector('.circle');
-  circle.style.borderColor = savingsPercent >= 0 ? '#10b981' : '#ff6b6b';
+  if (circle) circle.style.borderColor = savingsPercent >= 0 ? '#10b981' : '#ff6b6b';
 
   updateExpensesByCategory(monthKey);
 }
@@ -400,7 +568,7 @@ function saveSalary() {
   const monthKey = getMonthKey(currentMonth);
   if (!data.income[monthKey]) data.income[monthKey] = {};
   data.income[monthKey].salary = salary;
-  saveData();
+  saveUserData();
   document.getElementById('salary').value = '';
   switchTab('ingresos');
 }
@@ -433,7 +601,7 @@ function addVariableExpense() {
   const monthKey = getMonthKey(currentMonth);
   if (!data.variable[monthKey]) data.variable[monthKey] = {};
   data.variable[monthKey][Date.now()] = { desc, amount, category };
-  saveData();
+  saveUserData();
   document.getElementById('varDesc').value = '';
   document.getElementById('varAmount').value = '';
   document.getElementById('varCategory').value = '';
@@ -443,7 +611,7 @@ function addVariableExpense() {
 function deleteVariable(id) {
   const monthKey = getMonthKey(currentMonth);
   delete data.variable[monthKey][id];
-  saveData();
+  saveUserData();
   switchTab('gastos-variables');
 }
 
@@ -507,7 +675,7 @@ function addLoan() {
     };
   }
   
-  saveData();
+  saveUserData();
   document.getElementById('loanName').value = '';
   document.getElementById('loanBalance').value = '';
   document.getElementById('loanPayment').value = '';
@@ -522,7 +690,7 @@ function deleteLoan(id) {
   Object.keys(data.fixedByMonth).forEach(month => {
     delete data.fixedByMonth[month][id];
   });
-  saveData();
+  saveUserData();
   switchTab('prestamos');
 }
 
@@ -532,7 +700,7 @@ function makePayment(id) {
   if (!amount || amount <= 0) { alert('Ingresa un monto válido'); return; }
   if (amount > data.loans[id].balance) { alert('El monto supera el saldo pendiente'); return; }
   data.loans[id].balance -= amount;
-  saveData();
+  saveUserData();
   switchTab('prestamos');
 }
 
@@ -572,8 +740,6 @@ function nextMonth() {
   currentMonth.setMonth(currentMonth.getMonth() + 1);
   updateUI();
 }
-
-updateUI();
 </script>
 </body>
 </html>
