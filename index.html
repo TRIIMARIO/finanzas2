@@ -29,13 +29,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .summary-label { font-size: 11px; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
 .summary-value { font-size: 20px; font-weight: 700; color: #10b981; }
 .summary-box.negative .summary-value { color: #ff6b6b; }
+.annual-summary { background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.annual-title { font-size: 12px; color: #888; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.annual-items { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.annual-item { }
+.annual-item-label { font-size: 11px; color: #666; margin-bottom: 0.5rem; }
+.annual-item-value { font-size: 18px; font-weight: 700; color: #10b981; }
+.annual-item.negative .annual-item-value { color: #ff6b6b; }
 .form-group { margin-bottom: 1.25rem; }
 label { display: block; font-size: 12px; color: #aaa; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 input, select { width: 100%; padding: 0.75rem; border: 1px solid #333; border-radius: 8px; font-size: 14px; background: rgba(34, 34, 34, 0.8); color: #e0e0e0; }
 input:focus, select:focus { outline: none; border-color: #10b981; background: rgba(34, 34, 34, 0.95); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .form-row-3 { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .form-row-3 { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: 1fr; } .annual-items { grid-template-columns: 1fr; } }
 button { padding: 0.75rem 1.5rem; background: #10b981; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; color: white; width: 100%; }
 button:hover { background: #059669; }
 button.secondary { background: transparent; border: 1px solid #333; color: #e0e0e0; }
@@ -65,11 +72,6 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
 .loan-payment-row { display: flex; gap: 0.5rem; }
 .loan-payment-row input { flex: 1; margin: 0; }
 .loan-payment-row button { margin: 0; width: auto; padding: 0.6rem 1rem; }
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
-.stat-item { background: rgba(34, 34, 34, 0.8); border: 1px solid #333; border-radius: 10px; padding: 1rem; text-align: center; }
-.stat-label { font-size: 11px; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-value { font-size: 20px; font-weight: 700; color: #10b981; }
-.stat-item.negative .stat-value { color: #ff6b6b; }
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 20, 25, 0.95); border-top: 1px solid #2a3548; display: flex; justify-content: space-around; align-items: center; height: 70px; }
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 0.25rem; padding: 0.5rem; border-top: 2px solid transparent; transition: all 0.2s; color: #888; font-size: 10px; }
 .nav-item.active { color: #10b981; border-top-color: #10b981; }
@@ -112,6 +114,30 @@ button.danger { background: none; color: #ff6b6b; padding: 0.25rem 0.5rem; width
         <div class="summary-box negative">
           <div class="summary-label">Gastos</div>
           <div class="summary-value" id="totalExpenses">€0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="annual-summary">
+        <div class="annual-title">Resumen anual acumulado</div>
+        <div class="annual-items">
+          <div class="annual-item">
+            <div class="annual-item-label">Ingresos año</div>
+            <div class="annual-item-value" id="yearIncome">€0.00</div>
+          </div>
+          <div class="annual-item negative">
+            <div class="annual-item-label">Gastos año</div>
+            <div class="annual-item-value" id="yearExpenses">€0.00</div>
+          </div>
+          <div class="annual-item">
+            <div class="annual-item-label">Ahorrado acumulado</div>
+            <div class="annual-item-value" id="yearSavings">€0.00</div>
+          </div>
+          <div class="annual-item">
+            <div class="annual-item-label">% ahorrado</div>
+            <div class="annual-item-value" id="yearSavingsPercent">0%</div>
+          </div>
         </div>
       </div>
     </div>
@@ -292,6 +318,7 @@ function updateUI() {
   updateLoansUI(monthKey);
   updateMetrics(monthKey);
   updateHistory();
+  updateYearlyStats();
 }
 
 function updateMetrics(monthKey) {
@@ -314,6 +341,32 @@ function updateMetrics(monthKey) {
   circle.style.borderColor = savingsPercent >= 0 ? '#10b981' : '#ff6b6b';
 
   updateExpensesByCategory(monthKey);
+}
+
+function updateYearlyStats() {
+  const year = currentMonth.getFullYear();
+  let yearIncome = 0, yearExpenses = 0;
+  
+  for (let m = 0; m < 12; m++) {
+    const monthDate = new Date(year, m);
+    const monthKey = monthDate.toISOString().slice(0, 7);
+    
+    const monthIncome = data.income[monthKey] || {};
+    const monthFixed = data.fixedByMonth[monthKey] || {};
+    const monthVariable = data.variable[monthKey] || {};
+    
+    yearIncome += Object.values(monthIncome).reduce((a, b) => a + b, 0);
+    yearExpenses += Object.values(monthFixed).reduce((a, b) => a + b.amount, 0);
+    yearExpenses += Object.values(monthVariable).reduce((a, b) => a + b.amount, 0);
+  }
+  
+  const yearSavings = yearIncome - yearExpenses;
+  const yearPercent = yearIncome > 0 ? Math.round((yearSavings / yearIncome) * 100) : 0;
+  
+  document.getElementById('yearIncome').textContent = '€' + yearIncome.toFixed(2);
+  document.getElementById('yearExpenses').textContent = '€' + yearExpenses.toFixed(2);
+  document.getElementById('yearSavings').textContent = '€' + yearSavings.toFixed(2);
+  document.getElementById('yearSavingsPercent').textContent = yearPercent + '%';
 }
 
 function updateExpensesByCategory(monthKey) {
@@ -438,7 +491,6 @@ function addLoan() {
   const id = 'loan_' + Date.now();
   data.loans[id] = { name, balance, initial: balance, payment, day, category, endDate };
   
-  // Crear gastos fijos para cada mes desde ahora hasta la fecha de finalización
   const startMonth = new Date();
   const endMonth = new Date(endDate + '-01');
   
@@ -467,7 +519,6 @@ function addLoan() {
 
 function deleteLoan(id) {
   delete data.loans[id];
-  // Eliminar gastos fijos asociados
   Object.keys(data.fixedByMonth).forEach(month => {
     delete data.fixedByMonth[month][id];
   });
